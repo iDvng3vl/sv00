@@ -1,0 +1,184 @@
+/* Live 360° view inside the "A first look inside" panel */
+
+.tp-host {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 900ms var(--ease, ease);
+}
+
+/* The still poster underneath shows until the panorama is ready */
+.tp-host[data-status="ready"],
+.tp-host[data-status="moving"] {
+  opacity: 1;
+}
+
+.tp-host .psv-container {
+  background: transparent;
+  cursor: grab;
+}
+
+.tp-host .psv-container:active {
+  cursor: grabbing;
+}
+
+.tp-host .psv-loader-container {
+  display: none;
+}
+
+/* Keep the two-finger / Ctrl+scroll messages in the site's palette */
+.tp-host .psv-overlay {
+  background: rgba(36, 39, 34, 0.72);
+  font-family: "DM Sans", sans-serif;
+}
+
+/* ---------- Doorway hotspots ---------- */
+.tp-hotspots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.tp-hotspot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--white, #fffdf8);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 400ms ease;
+  will-change: transform;
+}
+
+.tp-hotspot-ring {
+  position: absolute;
+  left: -24px;
+  top: -24px;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid rgba(255, 253, 248, 0.92);
+  border-radius: 50%;
+  background: rgba(36, 39, 34, 0.32);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 10px 28px -10px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 350ms var(--ease, ease),
+    background 350ms ease;
+}
+
+.tp-hotspot-ring::before {
+  position: absolute;
+  inset: 15px;
+  border-radius: 50%;
+  background: #d2b68d;
+  content: "";
+}
+
+.tp-hotspot-ring::after {
+  position: absolute;
+  inset: -1.5px;
+  border: 1.5px solid rgba(255, 253, 248, 0.85);
+  border-radius: 50%;
+  content: "";
+  animation: tpPulse 2.4s var(--ease, ease) infinite;
+}
+
+.tp-hotspot-label {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  translate: -50% 0;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 253, 248, 0.32);
+  background: rgba(36, 39, 34, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: "DM Sans", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.tp-hotspot:hover .tp-hotspot-ring {
+  transform: scale(1.1);
+  background: rgba(210, 182, 141, 0.35);
+}
+
+.tp-hotspot[data-visible="false"],
+.tp-hotspots[data-status="loading"] .tp-hotspot,
+.tp-hotspots[data-status="moving"] .tp-hotspot {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Hint ---------- */
+.tp-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 253, 248, 0.32);
+  background: rgba(36, 39, 34, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--white, #fffdf8);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) translateY(8px);
+  transition:
+    opacity 600ms ease,
+    transform 600ms var(--ease, ease);
+}
+
+.tp-hint.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition-delay: 1.8s;
+}
+
+@keyframes tpPulse {
+  0% { opacity: 0.9; transform: scale(1); }
+  70%, 100% { opacity: 0; transform: scale(1.8); }
+}
+
+@media (max-width: 760px) {
+  .tp-hotspot-ring {
+    left: -20px;
+    top: -20px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .tp-hotspot-ring::before {
+    inset: 12px;
+  }
+
+  .tp-hotspot-label {
+    top: 28px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-hotspot-ring::after {
+    animation: none;
+  }
+
+  .tp-host,
+  .tp-hotspot,
+  .tp-hint {
+    transition: none;
+  }
+}
